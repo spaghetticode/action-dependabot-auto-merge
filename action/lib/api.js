@@ -1,5 +1,9 @@
+import core from '@actions/core'
+
 export async function approve (octokit, repo, { number }, body) {
-  await octokit.pulls.createReview({
+  core.info(`going to approve with: ${body}`)
+
+  await octokit.rest.pulls.createReview({
     ...repo,
     pull_number: number,
     event: 'APPROVE',
@@ -8,7 +12,9 @@ export async function approve (octokit, repo, { number }, body) {
 }
 
 export async function comment (octokit, repo, { number }, body) {
-  await octokit.issues.createComment({
+  core.info(`going to comment with: ${body}`)
+
+  await octokit.rest.issues.createComment({
     ...repo,
     issue_number: number,
     body

@@ -6,11 +6,13 @@ LABEL com.github.actions.name="Dependabot Auto Merge" \
       com.github.actions.color="blue" \
       maintainer="Ahmad Nassri <ahmad@ahmadnassri.com>"
 
+RUN apk --no-cache add git
+
 RUN mkdir /action
 WORKDIR /action
 
 COPY action ./
 
-RUN npm ci --only=prod
+RUN npm ci --omit=dev
 
 ENTRYPOINT ["node", "/action/index.js"]

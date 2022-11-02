@@ -38,7 +38,7 @@ export default function ({ title, labels = [], config = [], dependencies = {} })
   // exit early
   if (!depName) {
     core.warning('failed to parse title: could not detect dependency name')
-    return process.exit(0) // soft exit
+    return false // process.exit(0) // soft exit
   }
 
   // extract version from the title, allowing for constraints (~,^,>=) and v prefix
@@ -47,13 +47,13 @@ export default function ({ title, labels = [], config = [], dependencies = {} })
 
   if (!to) {
     core.warning('failed to parse title: no recognizable versions')
-    return process.exit(0) // soft exit
+    return false // return process.exit(0) // soft exit
   }
 
   // exit early
   if (!semver.valid(to.version)) {
     core.warning('failed to parse title: invalid semver')
-    return process.exit(0) // soft exit
+    return false // process.exit(0) // soft exit
   }
 
   // is this a security update?
@@ -110,10 +110,10 @@ export default function ({ title, labels = [], config = [], dependencies = {} })
       switch (true) {
         case update_type === 'in_range':
           core.warning('in_range update type not supported yet')
-          return process.exit(0) // soft exit
+          return false // process.exit(0) // soft exit
 
         case update_type === 'all':
-          core.info(`${dependency_name || dependency_type}:${update_type} detected, will auto-merge`)
+          core.info(`${dependency_name || dependency_type}:${update_type} detected, will try to auto-merge`)
           return true
 
         // security:patch, semver:minor, ...
@@ -124,7 +124,7 @@ export default function ({ title, labels = [], config = [], dependencies = {} })
           if (type === 'security' && !isSecurity) continue
 
           if (target === 'all') {
-            core.info(`${dependency_name || dependency_type}:${update_type} detected, will auto-merge`)
+            core.info(`${dependency_name || dependency_type}:${update_type} detected, will try to auto-merge`)
             return true
           }
 
@@ -137,7 +137,7 @@ export default function ({ title, labels = [], config = [], dependencies = {} })
           // evaluate weight of detected change
           if ((weight[target] || 0) >= (weight[versionChange] || 0)) {
           // tell dependabot to merge
-            core.info(`${dependency_name || dependency_type}:${update_type} detected, will auto-merge`)
+            core.info(`${dependency_name || dependency_type}:${update_type} detected, will try to auto-merge`)
             return true
           }
         }
